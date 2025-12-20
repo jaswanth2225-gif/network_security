@@ -1,3 +1,7 @@
 python-dotenv
 pandas
 numpy
+pymongo
+certifi
+openpyxl
+pymongo[srv]>=3.11
