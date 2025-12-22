@@ -5,3 +5,7 @@ pymongo
 certifi
 openpyxl
 pymongo[srv]>=3.11
+scikit-learn
+
+
+##-e.

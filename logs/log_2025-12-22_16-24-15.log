@@ -1,0 +1,5 @@
+2025-12-22 16:24:17,752 - INFO - Initiating data ingestion process
+2025-12-22 16:24:17,752 - INFO - Exporting data from MongoDB to feature store
+2025-12-22 16:24:48,585 - INFO - Saved feature store file at: Artifacts\12_22_2025_16_24_17\data_ingestion\feature_store\phisingData.csv
+2025-12-22 16:24:48,585 - INFO - Starting train-test split
+2025-12-22 16:24:48,672 - INFO - Saved train and test files
