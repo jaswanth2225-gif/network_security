@@ -6,6 +6,7 @@ from networksecurity.exception.exception import NetworkSecurityException
 from networksecurity.logging.logger import logging
 from networksecurity.utils.main_utils import export_collection_as_dataframe
 from sklearn.model_selection import train_test_split
+from networksecurity.entity.artifact_entity import DataIngestionArtifacts
 
 class DataIngestion:
     def __init__(self, data_ingestion_config):
@@ -50,15 +51,14 @@ class DataIngestion:
         except Exception as e:
             raise NetworkSecurityException(e, sys)
 
-    def initiate_data_ingestion(self):
+    def initiate_data_ingestion(self) -> DataIngestionArtifacts:
         try:
             dataframe = self.export_data_into_feature_store()
             self.split_data_as_train_test(dataframe)
-            return {
-                "feature_store_file": self.data_ingestion_config.feature_store_file_path,
-                "train_file": self.data_ingestion_config.training_file_path,
-                "test_file": self.data_ingestion_config.testing_file_path
-            }
+            return DataIngestionArtifacts(
+                trained_file_path=self.data_ingestion_config.training_file_path,
+                tested_file_path=self.data_ingestion_config.testing_file_path,
+            )
         except Exception as e:
             raise NetworkSecurityException(e, sys)
 

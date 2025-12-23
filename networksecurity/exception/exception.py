@@ -1,7 +1,8 @@
 import sys
 import logging
 from venv import logger
-logger.info("This is a log message")
+logging.basicConfig(level=logging.INFO)
+logger: logging.Logger = logging.getLogger(__name__)
 
 
 class NetworkSecurityException(Exception):
@@ -27,4 +28,3 @@ if __name__ == "__main__":
         print("This will not be printed",a)
     except Exception as e:
         raise NetworkSecurityException(e,sys)
-        
