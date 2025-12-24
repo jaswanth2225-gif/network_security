@@ -1,66 +1,73 @@
+# Schema configuration for phishing detection dataset
+# This file defines the expected columns and their data types for data validation
+
+# columns: All expected columns in the dataset with their data types
+# Each column is marked as int64 (integer values typically -1, 0, or 1)
 columns:
-  - having_IP_Address: int64
-  - URL_Length: int64
-  - Shortining_Service: int64
-  - having_At_Symbol: int64
-  - double_slash_redirecting: int64
-  - Prefix_Suffix: int64
-  - having_Sub_Domain: int64
-  - SSLfinal_State: int64
-  - Domain_registeration_length: int64
-  - Favicon: int64
-  - port: int64
-  - HTTPS_token: int64
-  - Request_URL: int64
-  - URL_of_Anchor: int64
-  - Links_in_tags: int64
-  - SFH: int64
-  - Submitting_to_email: int64
-  - Abnormal_URL: int64
-  - Redirect: int64
-  - on_mouseover: int64
-  - RightClick: int64
-  - popUpWidnow: int64
-  - Iframe: int64
-  - age_of_domain: int64
-  - DNSRecord: int64 
-  - web_traffic: int64
-  - Page_Rank: int64
-  - Google_Index: int64
-  - Links_pointing_to_page: int64
-  - Statistical_report: int64
-  - Result: int64
+  - having_IP_Address: int64          # Checks if URL contains IP address instead of domain name
+  - URL_Length: int64                 # Length classification of URL (short/medium/long)
+  - Shortining_Service: int64         # Indicates if URL shortening service is used (e.g., bit.ly)
+  - having_At_Symbol: int64           # Presence of '@' symbol in URL
+  - double_slash_redirecting: int64   # Checks for '//' appearing after protocol in URL path
+  - Prefix_Suffix: int64              # Presence of '-' (dash) in domain name
+  - having_Sub_Domain: int64          # Number of subdomains in URL
+  - SSLfinal_State: int64             # SSL certificate status and validity
+  - Domain_registeration_length: int64 # Duration of domain registration period
+  - Favicon: int64                    # Whether favicon is loaded from external domain
+  - port: int64                       # Checks for non-standard port usage
+  - HTTPS_token: int64                # Presence of 'https' in domain part (fake SSL indicator)
+  - Request_URL: int64                # Percentage of external objects in page
+  - URL_of_Anchor: int64              # Percentage of anchor tags with different domains
+  - Links_in_tags: int64              # Percentage of links in meta, script, and link tags
+  - SFH: int64                        # Server Form Handler - checks form submission URL
+  - Submitting_to_email: int64        # Checks if form submits data to email
+  - Abnormal_URL: int64               # URL matches WHOIS identity
+  - Redirect: int64                   # Number of redirects in URL path
+  - on_mouseover: int64               # JavaScript onMouseOver event status changes
+  - RightClick: int64                 # Right-click functionality disabled
+  - popUpWidnow: int64                # Pop-up window contains text fields
+  - Iframe: int64                     # Presence of invisible iframe (frameBorder)
+  - age_of_domain: int64              # Age of domain registration
+  - DNSRecord: int64                  # DNS record existence for domain
+  - web_traffic: int64                # Website traffic rank (Alexa rank)
+  - Page_Rank: int64                  # Google PageRank value
+  - Google_Index: int64               # Whether page is indexed by Google
+  - Links_pointing_to_page: int64     # Number of links pointing to the page
+  - Statistical_report: int64         # Whether domain is in top phishing IPs/domains list
+  - Result: int64                     # Target variable: Legitimate (0) or Phishing (1)
 
 
+# numerical_columns: List of all numerical columns used for validation and processing
+# These columns will be validated for correct data types during data validation phase
 numerical_columns:
-  - having_IP_Address
-  - URL_Length
-  - Shortining_Service
-  - having_At_Symbol
-  - double_slash_redirecting
-  - Prefix_Suffix
-  - having_Sub_Domain
-  - SSLfinal_State
-  - Domain_registeration_length
-  - Favicon
-  - port
-  - HTTPS_token
-  - Request_URL
-  - URL_of_Anchor
-  - Links_in_tags 
-  - SFH
-  - Submitting_to_email
-  - Abnormal_URL
-  - Redirect
-  - on_mouseover
-  - RightClick
-  - popUpWidnow
-  - Iframe
-  - age_of_domain
-  - DNSRecord 
-  - web_traffic
-  - Page_Rank
-  - Google_Index
-  - Links_pointing_to_page
-  - Statistical_report
-  - Result
+  - having_IP_Address                # IP address presence feature
+  - URL_Length                        # URL length feature
+  - Shortining_Service                # URL shortening service feature
+  - having_At_Symbol                  # '@' symbol presence feature
+  - double_slash_redirecting          # Double slash redirect feature
+  - Prefix_Suffix                     # Prefix-suffix in domain feature
+  - having_Sub_Domain                 # Subdomain feature
+  - SSLfinal_State                    # SSL state feature
+  - Domain_registeration_length       # Domain registration length feature
+  - Favicon                           # Favicon loading feature
+  - port                              # Port usage feature
+  - HTTPS_token                       # HTTPS token feature
+  - Request_URL                       # Request URL feature
+  - URL_of_Anchor                     # URL anchor feature
+  - Links_in_tags                     # Links in tags feature
+  - SFH                               # Server form handler feature
+  - Submitting_to_email               # Email submission feature
+  - Abnormal_URL                      # Abnormal URL feature
+  - Redirect                          # Redirect count feature
+  - on_mouseover                      # Mouse over event feature
+  - RightClick                        # Right click disabled feature
+  - popUpWidnow                       # Pop-up window feature
+  - Iframe                            # Iframe presence feature
+  - age_of_domain                     # Domain age feature
+  - DNSRecord                         # DNS record feature
+  - web_traffic                       # Web traffic rank feature
+  - Page_Rank                         # Google PageRank feature
+  - Google_Index                      # Google indexing feature
+  - Links_pointing_to_page            # Inbound links feature
+  - Statistical_report                # Statistical report feature
+  - Result                            # Target variable (0: Legitimate, 1: Phishing)
