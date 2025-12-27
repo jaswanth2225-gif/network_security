@@ -1,93 +1,81 @@
-"""
-Artifact Entity Module
+# WHY artifact classes: Store output paths from each pipeline stage
+# WHY dataclasses: Python's built-in way to create simple data containers
+# WHY pass data between stages: Ingestion → Validation → Transformation → Training
 
-This module defines data classes (using @dataclass) that represent the output
-artifacts of each pipeline stage. Artifacts are metadata/paths that describe
-where processed data is stored and what the results of each stage are.
-
-Artifacts serve as:
-1. Output of one pipeline stage
-2. Input to the next pipeline stage
-3. Traceable records of pipeline execution
-"""
-
-from dataclasses import dataclass
+from dataclasses import dataclass  # WHY: Auto-generate __init__, __repr__, etc.
 
 
 @dataclass
 class DataIngestionArtifacts:
     """
-    Artifacts produced by the Data Ingestion stage.
+    Output from Data Ingestion: paths to train and test CSVs.
     
-    This class holds paths to the training and testing datasets
-    created during data ingestion. These paths are used by subsequent
-    validation and transformation stages.
-    
-    Attributes:
-        trained_file_path (str): Absolute path to the training CSV file
-        tested_file_path (str): Absolute path to the testing CSV file
-        
-    Example:
-        >>> artifacts = DataIngestionArtifacts(
-        ...     trained_file_path='Artifacts/12_23_2025/data_ingestion/train.csv',
-        ...     tested_file_path='Artifacts/12_23_2025/data_ingestion/test.csv'
-        ... )
+    WHY this class: Validation stage needs to know where ingestion saved the files
     """
-    trained_file_path: str
-    tested_file_path: str
+    trained_file_path: str  # WHY: Path to train.csv (80% of data)
+    tested_file_path: str   # WHY: Path to test.csv (20% of data)
 
 
 @dataclass
 class DataValidationArtifacts:
     """
-    Artifacts produced by the Data Validation stage.
+    Output from Data Validation: paths to validated CSVs and drift report.
     
-    This class captures the results of data validation including:
-    - Overall validation status (whether data passed validation)
-    - Paths to validated (clean) data files
-    - Paths to invalid (rejected) data files
-    - Path to drift detection report
-    
-    Attributes:
-        validation_status (bool): True if no drift detected, False if drift found
-        valid_train_file_path (str): Path to validated training data CSV
-        valid_test_file_path (str): Path to validated testing data CSV
-        invalid_train_file_path (str): Path to rejected training data (if any)
-        invalid_test_file_path (str): Path to rejected testing data (if any)
-        drift_report_file_path (str): Path to YAML file with drift analysis
-        
-    Example:
-        >>> artifacts = DataValidationArtifacts(
-        ...     validation_status=True,
-        ...     valid_train_file_path='Artifacts/data_validation/validated/train.csv',
-        ...     valid_test_file_path='Artifacts/data_validation/validated/test.csv',
-        ...     invalid_train_file_path=None,
-        ...     invalid_test_file_path=None,
-        ...     drift_report_file_path='Artifacts/data_validation/drift_report/report.yaml'
-        ... )
+    WHY this class: Transformation stage needs to know where validated files are
+    WHY validation_status: Tells pipeline if data has critical drift issues
     """
-    validation_status: bool
-    valid_train_file_path: str
-    valid_test_file_path: str
-    invalid_train_file_path: str
-    invalid_test_file_path: str
-    drift_report_file_path: str
+    validation_status: bool  # WHY: True if no drift, False if drift detected
+    valid_train_file_path: str  # WHY: Path to validated train.csv
+    valid_test_file_path: str   # WHY: Path to validated test.csv
+    invalid_train_file_path: str  # WHY: Path for rejected data (not used yet)
+    invalid_test_file_path: str   # WHY: Path for rejected data (not used yet)
+    drift_report_file_path: str   # WHY: Path to YAML with KS test results
 
 
 @dataclass
 class DataTransformationArtifact:
     """
-    Artifacts produced by the Data Transformation stage.
+    Output from Data Transformation: paths to numpy arrays and preprocessing object.
     
-    This class holds paths to the preprocessed/transformed data
-    and the preprocessing object (scaler, imputer, etc.) needed
-    for model training and inference.
-    
-    Attributes:
-        transformed_object_file (str): Path to the serialized preprocessing object
-        transformed_train_file (str): Path to transformed training data
-        transformed_test_file (str): Path to transformed testing data
+    WHY this class: Model trainer needs transformed data and the fitted preprocessor
+    WHY numpy format: Models train faster on arrays than CSVs
+    WHY save preprocessor: Predictions need same transformations (KNN imputer with K=3)
     """
-    transformed_object_file: str
-    transformed_train_file: str
-    transformed_test_file: str
+    transformed_object_file: str  # WHY: Path to pickled KNN imputer (fitted on train data)
+    transformed_train_file: str   # WHY: Path to train.npy (features + target in last column)
+    transformed_test_file: str    # WHY: Path to test.npy (features + target in last column)
+
+
+@dataclass
+class ClassificationMetricArtifact:
+    """
+    Classification metrics for evaluating model performance.
+    
+    WHY this class: Store all metrics together for train and test sets
+    WHY accuracy added: Overall correctness (most intuitive metric)
+    """
+    f1_score: float    # WHY: Balance between precision and recall
+    accuracy: float    # WHY: Percentage of correct predictions
+    precision: float   # WHY: Of predicted positives, how many were correct
+    recall: float      # WHY: Of actual positives, how many were caught
+
+
+@dataclass
+class ModelTrainerArtifact:
+    """
+    Output from Model Training: path to best model and performance metrics.
+    
+    WHY this class: Next stage needs model path and metrics to decide if model is good enough
+    WHY best_model_name: Log which algorithm won (Random Forest, Gradient Boosting, etc.)
+    """
+    trained_model_file_path: str  # WHY: Path to pickled model wrapper (includes preprocessor)
+    train_metric_artifact: ClassificationMetricArtifact  # WHY: Performance on training data
+    test_metric_artifact: ClassificationMetricArtifact   # WHY: Performance on unseen test data
+    best_model_name: str  # WHY: Which algorithm performed best (e.g., "Random Forest")
+
+
+
+
+
+
+

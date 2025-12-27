@@ -1,52 +1,40 @@
 """
-
-1) sys means It provides access to system-specific parameters and functions.
-
-Commonly used for interacting with the Python interpreter, command-line arguments, and system-level operations.
-
+SQL	       MongoDB
+Database	Database (same)
+Table	    Collection
+Row	        Document
+Column	    Field/Key
 
 
 Training Pipeline Constants Module.
 
-This module centralizes all constants, file names, directory names, and
-configuration parameters used throughout the ML pipeline. Having constants
-in one place ensures consistency and makes updates easier.
-
-The constants are organized by pipeline stage:
-- General pipeline settings
-- Data Ingestion
-- Data Validation
-- Data Transformation
-- Model Training
+WHY constants in one place?
+- Consistency (same values used everywhere)
+- Easy updates (change value once, everywhere updates)
+- Avoids hardcoding magic numbers in code
+- Makes code more readable ("TARGET_COLUMN" vs "Result")
 """
 
-import os
-import sys
-import numpy as np
-import pandas as pd
+import os  # For file path operations
+import numpy as np  # NumPy for numerical arrays (used in DATA_TRANSFORMATION_IMPUTER_PARAMS)
+# sys and pandas imports removed - not used in this constants file
 
 # ============================================================
 # GENERAL PIPELINE CONSTANTS
 # ============================================================
 
-# Target column name in the dataset
-TARGET_COLUMN = "Result"
+TARGET_COLUMN = "Result"  # Column name being predicted (phishing=1, legitimate=0)
 
-# Pipeline name for identification and logging
-PIPELINE_NAME: str = "NetworkSecurity"
+PIPELINE_NAME: str = "NetworkSecurity"  # Pipeline identifier for logging and tracking
 
-# Base directory where all artifacts are stored
-ARTIFACT_DIR: str = "Artifacts"
+ARTIFACT_DIR: str = "Artifacts"  # Folder where all outputs are saved (timestamped subfolders)
 
-# Raw data CSV filename
-FILE_NAME: str = "phisingData.csv"
+FILE_NAME: str = "phisingData.csv"  # Raw data file name
 
-# Train and test split filenames
-TRAIN_FILE_NAME: str = "train.csv"
-TEST_FILE_NAME: str = "test.csv"
+TRAIN_FILE_NAME: str = "train.csv"  # Training data file (after data ingestion)
+TEST_FILE_NAME: str = "test.csv"  # Testing data file (after data ingestion)
 
-# Path to schema configuration file
-SCHEMA_FILE_PATH = os.path.join("data_schema", "schema.yaml")
+SCHEMA_FILE_PATH = os.path.join("data_schema", "schema.yaml")  # Path to schema validation file
 
 # Directory for production-ready models
 SAVED_MODEL_DIR = os.path.join("saved_models")
@@ -63,80 +51,71 @@ Data Ingestion stage fetches data from MongoDB and splits it
 into training and testing datasets.
 """
 
-# MongoDB collection name containing the phishing data
-DATA_INGESTION_COLLECTION_NAME: str = "NetworkData"
+# ============================================================
+# DATA INGESTION CONSTANTS
+# ============================================================
+"""
+Data Ingestion stage fetches data from MongoDB and splits it
+into training and testing datasets.
+"""
 
-# MongoDB database name
-DATA_INGESTION_DATABASE_NAME: str = "KRISHAI"
+DATA_INGESTION_COLLECTION_NAME: str = "NetworkData"  # MongoDB collection name (table with 9000 phishing records)
 
-# Directory name for data ingestion artifacts
-DATA_INGESTION_DIR_NAME: str = "data_ingestion"
+DATA_INGESTION_DATABASE_NAME: str = "KRISHAI"  # MongoDB database name (folder containing collections (tables))
 
-# Subdirectory for raw data (feature store)
-DATA_INGESTION_FEATURE_STORE_DIR: str = "feature_store"
+DATA_INGESTION_DIR_NAME: str = "data_ingestion"  # Folder name inside Artifacts to store ingestion outputs
 
-# Subdirectory for split train/test data
-DATA_INGESTION_INGESTED_DIR: str = "ingested"
+DATA_INGESTION_FEATURE_STORE_DIR: str = "feature_store"  # Subfolder storing raw data backup (for traceability)
 
-# Train-test split ratio (0.2 = 20% test, 80% train)
-DATA_INGESTION_TRAIN_TEST_SPLIT_RATION: float = 0.2
+DATA_INGESTION_INGESTED_DIR: str = "ingested"  # Subfolder storing split train/test data
+
+DATA_INGESTION_TRAIN_TEST_SPLIT_RATION: float = 0.2  # 0.2 = 20% test, 80% train (80/20 split)
 
 
 # ============================================================
 # DATA VALIDATION CONSTANTS
 # ============================================================
 """
-These are the inputs we are giving for data validation stage
 Data Validation stage checks data quality, schema compliance,
 and detects data drift between train and test sets.
 """
 
-# Directory name for validation artifacts (Data Validation stage Dir)
-DATA_VALIDATION_DIR_NAME: str = "data_validation"
+DATA_VALIDATION_DIR_NAME: str = "data_validation"  # Folder name inside Artifacts for validation artifacts
 
-# Subdirectory for validated (clean) data 
-DATA_VALIDATION_VALID_DIR: str = "validated"
+DATA_VALIDATION_VALID_DIR: str = "validated"  # Subfolder for data that passed all validation checks
 
-# Subdirectory for invalid (rejected) data
-DATA_VALIDATION_INVALID_DIR: str = "invalid"
+DATA_VALIDATION_INVALID_DIR: str = "invalid"  # Subfolder for data that failed validation checks
 
-# Subdirectory for drift analysis reports 
-DATA_VALIDATION_DRIFT_REPORT_DIR: str = "drift_report"
+DATA_VALIDATION_DRIFT_REPORT_DIR: str = "drift_report"  # Subfolder for drift analysis reports
 
-# Drift report filename (YAML format)  Drift Report File Path
-DATA_VALIDATION_DRIFT_REPORT_FILE_NAME: str = "report.yaml"
+DATA_VALIDATION_DRIFT_REPORT_FILE_NAME: str = "report.yaml"  # Drift report filename (YAML format)
 
-# Preprocessing pipeline object filename
-PREPROCESSING_OBJECT_FILE_NAME = "preprocessing.pkl"
+PREPROCESSING_OBJECT_FILE_NAME = "preprocessing.pkl"  # Preprocessing pipeline filename (pickle format)
 
 
 # ============================================================
-# DATA TRANSFORMATION CONSTANTS 
+# DATA TRANSFORMATION CONSTANTS
 # ============================================================
 """
 Data Transformation stage handles feature engineering,
-scaling, encoding, and imputation.
+imputation (filling missing values), and conversion to numpy arrays.
 """
 
-# Directory name for transformation artifacts
-DATA_TRANSFORMATION_DIR_NAME: str = "data_transformation"
+DATA_TRANSFORMATION_DIR_NAME: str = "data_transformation"  # Folder name inside Artifacts for transformation outputs
 
-# Subdirectory for transformed datasets (NumPy arrays)
-DATA_TRANSFORMATION_TRANSFORMED_DATA_DIR: str = "transformed"
+DATA_TRANSFORMATION_TRANSFORMED_DATA_DIR: str = "transformed"  # Subfolder for transformed numpy arrays (train.npy, test.npy)
 
-# Subdirectory for transformation objects (scalers, encoders)
-DATA_TRANSFORMATION_TRANSFORMED_OBJECT_DIR: str = "transformed_object"
+DATA_TRANSFORMATION_TRANSFORMED_OBJECT_DIR: str = "transformed_object"  # Subfolder for transformation objects (KNN imputer, etc.)
 
-# KNN Imputer parameters for handling missing values
+# KNN Imputer settings (fills missing values using K-nearest neighbors)
 DATA_TRANSFORMATION_IMPUTER_PARAMS: dict = {
-    "missing_values": np.nan,  # Identify NaN as missing
-    "n_neighbors": 3,          # Use 3 nearest neighbors for imputation
-    "weights": "uniform",      # Equal weight to all neighbors
+    "missing_values": np.nan,  # np.nan = Missing value indicator (NaN = Not a Number)
+    "n_neighbors": 3,          # K=3 = Use 3 nearest neighbors to estimate missing values
+    "weights": "uniform",      # All 3 neighbors vote equally (no weighted voting)
 }
 
-# Transformed data filenames (NumPy format)
-DATA_TRANSFORMATION_TRAIN_FILE_PATH: str = "train.npy"
-DATA_TRANSFORMATION_TEST_FILE_PATH: str = "test.npy"
+DATA_TRANSFORMATION_TRAIN_FILE_PATH: str = "train.npy"  # Transformed training data filename (.npy = numpy format)
+DATA_TRANSFORMATION_TEST_FILE_PATH: str = "test.npy"  # Transformed testing data filename (.npy = numpy format)
 
 
 # ============================================================
@@ -147,21 +126,15 @@ Model Trainer stage handles model training, evaluation,
 and performance validation.
 """
 
-# Directory name for model training artifacts
-MODEL_TRAINER_DIR_NAME: str = "model_trainer"
+MODEL_TRAINER_DIR_NAME: str = "model_trainer"  # Folder name inside Artifacts for trained model
 
-# Subdirectory for trained model files
-MODEL_TRAINER_TRAINED_MODEL_DIR: str = "trained_model"
+MODEL_TRAINER_TRAINED_MODEL_DIR: str = "trained_model"  # Subfolder for the final trained model file
 
-# Trained model filename
-MODEL_TRAINER_TRAINED_MODEL_NAME: str = "model.pkl"
+MODEL_TRAINER_TRAINED_MODEL_NAME: str = "model.pkl"  # Trained model filename (pickle format)
 
-# Minimum acceptable model accuracy (60%)
-MODEL_TRAINER_EXPECTED_SCORE: float = 0.6
+MODEL_TRAINER_EXPECTED_SCORE: float = 0.6  # Minimum acceptable accuracy (60% = 0.60)
 
-# Maximum acceptable difference between train and test accuracy
-# Used to detect overfitting/underfitting (5% threshold)
-MODEL_TRAINER_OVER_FIITING_UNDER_FITTING_THRESHOLD: float = 0.05
+MODEL_TRAINER_OVER_FIITING_UNDER_FITTING_THRESHOLD: float = 0.05  # Max difference between train/test accuracy (5%)
+# If train accuracy >> test accuracy (by >5%), model is overfitting (memorized training data)
 
-# Cloud storage bucket name (for model deployment)
-TRAINING_BUCKET_NAME = "netwworksecurity"
+TRAINING_BUCKET_NAME = "netwworksecurity"  # Cloud storage bucket for model deployment

@@ -1,77 +1,61 @@
-# Standard library imports
-import os  # For file and directory operations
-import sys  # For system-specific parameters and functions
+# === IMPORTS SECTION ===
+# These are like tools in a toolbox - we import libraries/modules we'll use below
 
-# Third-party imports
-import pandas as pd  # For data manipulation and analysis
-import numpy as np  # For numerical computing (currently unused)
-from sklearn.model_selection import train_test_split  # For splitting data into train/test sets
+import os  # Built-in Python library for file/folder operations (creating directories, checking if files exist)
+import sys  # Built-in Python library to get system info (helps with error messages showing which line failed)
 
-# Project-specific imports
-from networksecurity.exception.exception import NetworkSecurityException  # Custom exception handling
-from networksecurity.logging.logger import logging  # Custom logging configuration
-from networksecurity.utils.main_utils import export_collection_as_dataframe  # MongoDB data export utility
-from networksecurity.entity.artifact_entity import DataIngestionArtifacts  # Data class for ingestion outputs
+# Data manipulation libraries (most common in data science)
+import pandas as pd  # Pandas = Excel on steroids. Works with tables/spreadsheets (called DataFrames)
+import numpy as np  # NumPy = Fast math operations on arrays/matrices of numbers
+from sklearn.model_selection import train_test_split  # Scikit-learn function: randomly splits data into training and testing sets
+
+# Our custom modules (code we wrote in other files)
+from networksecurity.exception.exception import NetworkSecurityException  # Our custom error class: shows helpful error messages
+from networksecurity.logging.logger import logging  # Our custom logger: writes messages to log files so we can track what happened
+from networksecurity.utils.main_utils import export_collection_as_dataframe  # Our function: connects to MongoDB and fetches data
+from networksecurity.entity.artifact_entity import DataIngestionArtifacts  # Our dataclass: holds file paths to pass to next stage
 
 
 class DataIngestion:
     """
-    DataIngestion class handles the initial stage of the ML pipeline.
+    WHAT THIS CLASS DOES: Gets data from MongoDB database and splits it into separate train/test CSV files
     
-    This class is responsible for:
-    1. Fetching data from MongoDB or CSV fallback
-    2. Storing data in a feature store
-    3. Splitting data into training and testing sets
-    4. Returning paths to generated datasets as artifacts
-    
-    Attributes:
-        data_ingestion_config: Configuration object containing paths and database details
+    ANALOGY: Like a librarian who:
+    1. Fetches books (data) from the library (MongoDB)
+    2. Makes a photocopy (saves to CSV) 
+    3. Splits the copy into two piles: 80% for studying (training), 20% for exam (testing)
     """
     
     def __init__(self, data_ingestion_config):
-        """
-        Initialize the DataIngestion component with configuration.
-        
-        Args:
-            data_ingestion_config: DataIngestionConfig object with all necessary
-                                  paths, database names, and split ratios
-                                  
-        Raises:
-            NetworkSecurityException: If initialization fails
-        """
-        try:
-            self.data_ingestion_config = data_ingestion_config
-        except Exception as e:
-            raise NetworkSecurityException(e, sys)
+        """Initialize with data ingestion configuration."""
+        self.data_ingestion_config = data_ingestion_config
 
-    def export_data_into_feature_store(self) -> pd.DataFrame:
+    def export_data_into_feature_store(self):
         """
-        Export data from MongoDB/CSV and save it to the feature store.
+        WHAT THIS METHOD DOES: Downloads data from MongoDB and saves it as a CSV file
         
-        This method fetches raw data from the configured MongoDB collection
-        (or CSV fallback) and stores it in a centralized feature store location.
-        The feature store acts as a versioned snapshot of raw data for the pipeline.
+        FEATURE STORE = A folder where we keep a snapshot/backup of the raw data
+        WHY: If MongoDB data changes later, we still have the original version we used
         
-        Returns:
-            pd.DataFrame: DataFrame containing the exported data
-            
-        Raises:
-            NetworkSecurityException: If data export or file saving fails
+        RETURNS: A pandas DataFrame (think: Excel spreadsheet in Python memory)
+        
+        STEP-BY-STEP:
+        1. Connect to MongoDB database
+        2. Fetch all records from the collection (like a table in SQL)
+        3. Convert MongoDB documents to pandas DataFrame (rows and columns)
+        4. Save DataFrame as CSV file for backup
+        5. Return the DataFrame so we can use it
         """
         try:
             logging.info("Exporting data from MongoDB to feature store")
             
-            # Fetch data from MongoDB collection (with CSV fallback)
             dataframe = export_collection_as_dataframe(
                 database_name=self.data_ingestion_config.database_name,
                 collection_name=self.data_ingestion_config.collection_name
             )
 
-            # Create feature store directory structure if it doesn't exist
             os.makedirs(os.path.dirname(self.data_ingestion_config.feature_store_file_path), exist_ok=True)
 
-            # Save the DataFrame to CSV in the feature store location
-            # index=False prevents saving DataFrame index as a column
             dataframe.to_csv(self.data_ingestion_config.feature_store_file_path, index=False)
             logging.info("Saved feature store file at: %s", self.data_ingestion_config.feature_store_file_path)
             
@@ -79,36 +63,29 @@ class DataIngestion:
         except Exception as e:
             raise NetworkSecurityException(e, sys)
 
-    def split_data_as_train_test(self, dataframe: pd.DataFrame):
+    def split_data_as_train_test(self, dataframe):
         """
-        Split the feature store data into training and testing datasets.
+        WHAT THIS METHOD DOES: Divides the data into two separate sets - training and testing
         
-        This method performs stratified train-test split using scikit-learn's
-        train_test_split function. The split ratio is configured in the
-        data_ingestion_config. A fixed random_state ensures reproducibility.
+        WHY WE NEED TWO SETS:
+        - Training set (80%) = Data the model learns from (like study material)
+        - Testing set (20%) = Data we use to test if model learned correctly (like an exam)
+        - We NEVER let the model see test data during training (prevents cheating/memorization)
         
-        Args:
-            dataframe (pd.DataFrame): Complete dataset to be split
-            
-        Raises:
-            NetworkSecurityException: If splitting or file saving fails
+        PARAMETERS:
+            dataframe = the complete dataset we fetched from MongoDB
         """
         try:
             logging.info("Starting train-test split")
             
-            # Split data into train and test sets
-            # test_size: Proportion of data for testing (e.g., 0.2 = 20%)
-            # random_state=42: Fixed seed for reproducible splits
             train_set, test_set = train_test_split(
                 dataframe,
                 test_size=self.data_ingestion_config.train_test_split_ratio,
                 random_state=42
             )
-
-            # Create directory for ingested data if it doesn't exist
+            
             os.makedirs(os.path.dirname(self.data_ingestion_config.training_file_path), exist_ok=True)
 
-            # Save training and testing datasets as CSV files
             train_set.to_csv(self.data_ingestion_config.training_file_path, index=False)
             test_set.to_csv(self.data_ingestion_config.testing_file_path, index=False)
 
@@ -118,34 +95,22 @@ class DataIngestion:
 
     def initiate_data_ingestion(self) -> DataIngestionArtifacts:
         """
-        Execute the complete data ingestion pipeline.
+        Run the complete data ingestion: fetch from MongoDB, save to feature store, split into train/test.
         
-        This is the main orchestrator method that:
-        1. Exports data from MongoDB to feature store
-        2. Splits the data into train and test sets
-        3. Returns artifact paths for downstream pipeline stages
+        WORKFLOW (step by step):
+        1. Fetch data from MongoDB → save to feature_store/phisingData.csv
+        2. Split that data → save to ingested/train.csv and ingested/test.csv
+        3. Return the file paths so the next pipeline stage knows where to find the files
         
-        Returns:
-            DataIngestionArtifacts: Object containing paths to:
-                - trained_file_path: Path to training CSV
-                - tested_file_path: Path to testing CSV
-                
-        Raises:
-            NetworkSecurityException: If any step in the ingestion process fails
-            
-        Example:
-            >>> ingestion = DataIngestion(config)
-            >>> artifacts = ingestion.initiate_data_ingestion()
-            >>> print(artifacts.trained_file_path)
+        RETURNS: DataIngestionArtifacts object containing:
+            - trained_file_path: Path to train.csv
+            - tested_file_path: Path to test.csv
         """
         try:
-            # Step 1: Export data from MongoDB/CSV to feature store
             dataframe = self.export_data_into_feature_store()
             
-            # Step 2: Split data into training and testing sets
             self.split_data_as_train_test(dataframe)
             
-            # Step 3: Return artifact paths for next pipeline stage
             return DataIngestionArtifacts(
                 trained_file_path=self.data_ingestion_config.training_file_path,
                 tested_file_path=self.data_ingestion_config.testing_file_path,

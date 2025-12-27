@@ -1,189 +1,80 @@
-"""
+# WHY config classes: Centralize all file paths and settings so components don't hardcode paths
+# WHY timestamps: Each pipeline run gets its own folder (Artifacts/12_23_2025_14_30_45/)
+# WHY versioning: Can compare different runs, keep history, reproduce results
 
-1)training_pipeline is __init__.py(constant)
-2) import os means joins the build file and folder paths
-3) datetime is used to get current date and time
+from __future__ import annotations  # WHY: Enable forward references in type hints for reordered classes
 
-Configuration Entity Module.
+from datetime import datetime  # WHY: Generate unique folder names for each run
+import os  # WHY: Build cross-platform file paths (Windows vs Linux)
+from networksecurity.constant import training_pipeline  # WHY: Load constants (database names, folder names)
 
-This module defines configuration classes for each stage of the ML pipeline.
-Each config class encapsulates paths, parameters, and settings needed by
-its corresponding pipeline component.
-
-Configuration classes serve to:
-1. Centralize all file paths and parameters
-2. Ensure consistent directory structure across pipeline runs
-3. Enable versioned artifacts through timestamps
-4. Decouple configuration from business logic
-"""
-
-from datetime import datetime
-import os
-from networksecurity.constant import training_pipeline
-
-# Display pipeline configuration on module load (for debugging)
+# WHY print: Quick debug to see where artifacts will be saved
 print(training_pipeline.PIPELINE_NAME)
 print(training_pipeline.ARTIFACT_DIR)
 
 
-class TrainingPipelineConfig:
-    """
-    Master configuration for the entire training pipeline.
-    
-    This is the root configuration that creates a timestamped artifact
-    directory for the current pipeline run. All subsequent stage configs
-    derive their paths from this master config.
-    
-    Attributes:
-        pipeline_name (str): Name of the ML pipeline
-        artifact_name (str): Base directory name for artifacts
-        artifact_dir (str): Timestamped directory for this pipeline run
-        model_dir (str): Directory for final trained models
-        timestamp (str): Timestamp string for versioning
-        
-    Example:
-        >>> config = TrainingPipelineConfig()
-        >>> print(config.artifact_dir)
-        'Artifacts/12_23_2025_14_30_45'
-    """
-    
-    def __init__(self, timestamp=datetime.now()):
-        """
-        Initialize master pipeline configuration.
-        
-        Args:
-            timestamp (datetime, optional): Timestamp for versioning.
-                                           Defaults to current time.
-        """
-        # Format timestamp as: MM_DD_YYYY_HH_MM_SS
-        timestamp = timestamp.strftime("%m_%d_%Y_%H_%M_%S")
-        
-        # Load pipeline constants
-        self.pipeline_name = training_pipeline.PIPELINE_NAME
-        self.artifact_name = training_pipeline.ARTIFACT_DIR
-        
-        # Create versioned artifact directory: Artifacts/<timestamp>
-        self.artifact_dir = os.path.join(self.artifact_name, timestamp)
-        
-        # Directory for final production models
-        self.model_dir = os.path.join("final_model")
-        
-        # Store timestamp for reference
-        self.timestamp: str = timestamp
-
-
 class DataIngestionConfig:
-    """
-    Configuration for the Data Ingestion stage.
-    
-    This config defines all paths and parameters needed for:
-    - Fetching data from MongoDB
-    - Storing raw data in feature store
-    - Splitting data into train/test sets
-    
-    Attributes:
-        data_ingestion_dir (str): Base directory for ingestion artifacts
-        feature_store_file_path (str): Path to raw data CSV (feature store)
-        training_file_path (str): Path to training dataset CSV
-        testing_file_path (str): Path to testing dataset CSV
-        train_test_split_ratio (float): Proportion of data for testing (e.g., 0.2)
-        collection_name (str): MongoDB collection name to fetch from
-        database_name (str): MongoDB database name
-        
-    Example:
-        >>> master_config = TrainingPipelineConfig()
-        >>> config = DataIngestionConfig(master_config)
-        >>> print(config.training_file_path)
-        'Artifacts/12_23_2025_14_30_45/data_ingestion/ingested/train.csv'
-    """
+    """Paths and settings for fetching data from MongoDB and splitting train/test"""
     
     def __init__(self, training_pipeline_config: TrainingPipelineConfig):
-        """
-        Initialize data ingestion configuration.
-        
-        Args:
-            training_pipeline_config: Master pipeline config with artifact directory
-        """
-        # Base directory for all ingestion outputs
+        # WHY join with artifact_dir: Creates Artifacts/12_23_2025_14_30_45/data_ingestion/
         self.data_ingestion_dir: str = os.path.join(
             training_pipeline_config.artifact_dir,
             training_pipeline.DATA_INGESTION_DIR_NAME
         )
         
-        # Path to raw data CSV in feature store
+        # WHY feature_store: Keep snapshot of raw data from MongoDB for reproducibility
         self.feature_store_file_path: str = os.path.join(
             self.data_ingestion_dir,
             training_pipeline.DATA_INGESTION_FEATURE_STORE_DIR,
             training_pipeline.FILE_NAME
         )
         
-        # Path to training dataset
+        # WHY training_file_path: Separate 80% of data for model training
         self.training_file_path: str = os.path.join(
             self.data_ingestion_dir,
             training_pipeline.DATA_INGESTION_INGESTED_DIR,
             training_pipeline.TRAIN_FILE_NAME
         )
         
-        # Path to testing dataset
+        # WHY testing_file_path: Separate 20% of data for model evaluation
         self.testing_file_path: str = os.path.join(
             self.data_ingestion_dir,
             training_pipeline.DATA_INGESTION_INGESTED_DIR,
             training_pipeline.TEST_FILE_NAME
         )
         
-        # Train-test split ratio (e.g., 0.2 means 20% test, 80% train)
+        # WHY 0.2 ratio: Industry standard 80/20 split
         self.train_test_split_ratio: float = training_pipeline.DATA_INGESTION_TRAIN_TEST_SPLIT_RATION
         
-        # MongoDB collection and database names
+        # WHY save names: Tell data ingestion which MongoDB collection to read
         self.collection_name: str = training_pipeline.DATA_INGESTION_COLLECTION_NAME
         self.database_name: str = training_pipeline.DATA_INGESTION_DATABASE_NAME
 
+
 class DataValidationConfig:
-    """
-    Configuration for the Data Validation stage.
-    
-    This config defines paths for:
-    - Validated (clean) data storage
-    - Invalid (rejected) data storage
-    - Drift detection reports
-    
-    Attributes:
-        data_validation_dir (str): Base directory for validation artifacts
-        valid_data_dir (str): Directory for validated datasets
-        invalid_data_dir (str): Directory for invalid datasets
-        valid_train_file_path (str): Path to validated training CSV
-        valid_test_file_path (str): Path to validated testing CSV
-        invalid_train_file_path (str): Path to rejected training CSV
-        invalid_test_file_path (str): Path to rejected testing CSV
-        drift_report_file_path (str): Path to drift analysis YAML report
-    """
+    """Paths for validated data and drift reports"""
     
     def __init__(self, training_pipeline_config: TrainingPipelineConfig):
-        """
-        Initialize data validation configuration.
-        
-        Args:
-            training_pipeline_config: Master pipeline config with artifact directory
-        """
-        # Base directory for validation outputs
+        # WHY join: Creates Artifacts/12_23_2025_14_30_45/data_validation/
         self.data_validation_dir: str = os.path.join(
             training_pipeline_config.artifact_dir,
             training_pipeline.DATA_VALIDATION_DIR_NAME
         )
         
-        # Directory for validated (passed) datasets
+        # WHY valid_data_dir: Store data that passed schema and drift checks
         self.valid_data_dir: str = os.path.join(
             self.data_validation_dir,
             training_pipeline.DATA_VALIDATION_VALID_DIR
         )
         
-        # Directory for invalid (failed) datasets
+        # WHY invalid_data_dir: Separate folder for rejected data (not used yet)
         self.invalid_data_dir: str = os.path.join(
             self.data_validation_dir,
             training_pipeline.DATA_VALIDATION_INVALID_DIR
         )
         
-        # Paths for validated datasets
+        # WHY valid paths: Transformation stage loads these validated CSVs
         self.valid_train_file_path: str = os.path.join(
             self.valid_data_dir,
             training_pipeline.TRAIN_FILE_NAME
@@ -193,7 +84,7 @@ class DataValidationConfig:
             training_pipeline.TEST_FILE_NAME
         )
         
-        # Paths for invalid datasets (currently unused but available)
+        # WHY invalid paths: Future enhancement to segregate bad data
         self.invalid_train_file_path: str = os.path.join(
             self.invalid_data_dir,
             training_pipeline.TRAIN_FILE_NAME
@@ -203,56 +94,39 @@ class DataValidationConfig:
             training_pipeline.TEST_FILE_NAME
         )
         
-        # Path to drift detection report (YAML file with p-values)
+        # WHY drift report: YAML file with KS test p-values for each column
         self.drift_report_file_path: str = os.path.join(
             self.data_validation_dir,
             training_pipeline.DATA_VALIDATION_DRIFT_REPORT_DIR,
             training_pipeline.DATA_VALIDATION_DRIFT_REPORT_FILE_NAME,
         )
 
+
 class DataTransformationConfig:
-    """
-    Configuration for the Data Transformation stage.
-    
-    This config defines paths for:
-    - Transformed (preprocessed) datasets
-    - Preprocessing objects (scalers, encoders)
-    
-    Attributes:
-        data_transformation_dir (str): Base directory for transformation artifacts
-        transformed_train_file_path (str): Path to transformed training array (.npy)
-        transformed_test_file_path (str): Path to transformed testing array (.npy)
-        transformed_object_file_path (str): Path to preprocessing pipeline object
-    """
+    """Paths for transformed numpy arrays and preprocessing objects"""
     
     def __init__(self, training_pipeline_config: TrainingPipelineConfig):
-        """
-        Initialize data transformation configuration.
-        
-        Args:
-            training_pipeline_config: Master pipeline config with artifact directory
-        """
-        # Base directory for transformation outputs
+        # WHY join: Creates Artifacts/12_23_2025_14_30_45/data_transformation/
         self.data_transformation_dir: str = os.path.join(
             training_pipeline_config.artifact_dir,
             training_pipeline.DATA_TRANSFORMATION_DIR_NAME
         )
         
-        # Path to transformed training data (NumPy array format)
+        # WHY .npy format: NumPy arrays load faster than CSV for model training
+        # WHY replace: Convert train.csv → train.npy
         self.transformed_train_file_path: str = os.path.join(
             self.data_transformation_dir,
             training_pipeline.DATA_TRANSFORMATION_TRANSFORMED_DATA_DIR,
-            training_pipeline.TRAIN_FILE_NAME.replace("csv", "npy"),  # Convert .csv to .npy
+            training_pipeline.TRAIN_FILE_NAME.replace("csv", "npy"),
         )
         
-        # Path to transformed testing data (NumPy array format)
         self.transformed_test_file_path: str = os.path.join(
             self.data_transformation_dir,
             training_pipeline.DATA_TRANSFORMATION_TRANSFORMED_DATA_DIR,
-            training_pipeline.TEST_FILE_NAME.replace("csv", "npy"),  # Convert .csv to .npy
+            training_pipeline.TEST_FILE_NAME.replace("csv", "npy"),
         )
         
-        # Path to preprocessing pipeline object (pickled scikit-learn pipeline)
+        # WHY save preprocessor: Predictions need same transformations (KNN imputer with K=3)
         self.transformed_object_file_path: str = os.path.join(
             self.data_transformation_dir,
             training_pipeline.DATA_TRANSFORMATION_TRANSFORMED_OBJECT_DIR,
@@ -261,45 +135,46 @@ class DataTransformationConfig:
 
 
 class ModelTrainerConfig:
-    """
-    Configuration for the Model Training stage.
-    
-    This config defines:
-    - Where to save trained models
-    - Model performance thresholds
-    - Overfitting/underfitting detection parameters
-    
-    Attributes:
-        model_trainer_dir (str): Base directory for model training artifacts
-        trained_model_file_path (str): Path to save trained model (.pkl)
-        expected_accuracy (float): Minimum acceptable model accuracy
-        overfitting_underfitting_threshold (float): Max acceptable difference
-                                                    between train and test scores
-    """
+    """Paths and thresholds for model training"""
     
     def __init__(self, training_pipeline_config: TrainingPipelineConfig):
-        """
-        Initialize model trainer configuration.
-        
-        Args:
-            training_pipeline_config: Master pipeline config with artifact directory
-        """
-        # Base directory for model training outputs
+        # WHY join: Creates Artifacts/12_23_2025_14_30_45/model_trainer/
         self.model_trainer_dir: str = os.path.join(
             training_pipeline_config.artifact_dir,
             training_pipeline.MODEL_TRAINER_DIR_NAME
         )
         
-        # Path to save the trained model file
+        # WHY .pkl format: Pickled model can be loaded for predictions
         self.trained_model_file_path: str = os.path.join(
             self.model_trainer_dir,
             training_pipeline.MODEL_TRAINER_TRAINED_MODEL_DIR,
             training_pipeline.MODEL_FILE_NAME
         )
         
-        # Minimum acceptable accuracy for the model (e.g., 0.6 = 60%)
+        # WHY expected_accuracy: Reject models below 60% accuracy (too weak for production)
         self.expected_accuracy: float = training_pipeline.MODEL_TRAINER_EXPECTED_SCORE
         
-        # Maximum acceptable difference between train and test accuracy
-        # Used to detect overfitting (e.g., 0.05 = 5% max difference)
+        # WHY overfitting threshold: If train accuracy >> test accuracy, model memorized training data
+        # WHY 0.05: Max 5% difference allowed between train and test scores
         self.overfitting_underfitting_threshold = training_pipeline.MODEL_TRAINER_OVER_FIITING_UNDER_FITTING_THRESHOLD
+
+
+class TrainingPipelineConfig:
+    """Root config that creates timestamped folder for this pipeline run"""
+    
+    def __init__(self, timestamp=datetime.now()):
+        # WHY timestamp: Each run gets unique folder (Artifacts/12_23_2025_14_30_45/)
+        # WHY unique folders: Can compare runs, won't overwrite previous results
+        timestamp = timestamp.strftime("%m_%d_%Y_%H_%M_%S")
+        
+        self.pipeline_name = training_pipeline.PIPELINE_NAME
+        self.artifact_name = training_pipeline.ARTIFACT_DIR
+        
+        # WHY join: Creates path like Artifacts/12_23_2025_14_30_45/
+        # WHY timestamped: Every run is versioned and traceable
+        self.artifact_dir = os.path.join(self.artifact_name, timestamp)
+        
+        # WHY final_model: Separate folder for production-ready models
+        self.model_dir = os.path.join("final_model")
+        
+        self.timestamp: str = timestamp

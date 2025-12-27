@@ -1,84 +1,85 @@
 """
-Custom Exception Module for Network Security Project.
+Custom error class for the Network Security project.
 
-This module defines a custom exception class that provides enhanced
-error reporting with file names, line numbers, and detailed error messages.
-This helps in debugging by pinpointing exactly where errors occur.
+Purpose:
+- Show WHAT error happened (error message)
+- Show WHERE it happened (file name and line number)
+- Make debugging much faster (know exactly where to look)
 """
 
-import sys
-import logging
-from venv import logger
+import sys  # System module (used to get error details like file name and line number)
+from networksecurity.logging.logger import logging as _logging
 
-# Configure basic logging
-logging.basicConfig(level=logging.INFO)
-logger: logging.Logger = logging.getLogger(__name__)
+# Create a logger for this file using central configuration
+logger = _logging.getLogger(__name__)
 
 
 class NetworkSecurityException(Exception):
     """
-    Custom exception class for the Network Security ML project.
+    Custom exception that shows error message + file name + line number.
     
-    This exception extends Python's base Exception class to provide
-    detailed error information including:
-    - Original error message
-    - File name where error occurred
-    - Line number where error occurred
-    
-    Attributes:
-        error_message: The original exception message
-        lineno (int): Line number where exception was raised
-        file_name (str): Python script name where exception occurred
+    Why custom exception?
+    - Default errors don't show file name
+    - Default errors don't show line number  
+    - We added both to help debugging faster
     """
-    
+
     def __init__(self, error_message, error_details: sys):
         """
-        Initialize custom exception with enhanced error details.
+        Initialize the custom error.
         
-        Args:
-            error_message: Original exception object or error string
-            error_details (sys): sys module to extract traceback information
+        error_message = Original Python error (e.g., "Division by zero")
+        error_details = sys module (contains traceback = where error happened)
         """
-        self.error_message = error_message
 
-        # Extract exception traceback information
-        # exc_info() returns (type, value, traceback)
+        self.error_message = error_message  # Store the error message
+
+        # Get traceback (detailed record of error location)
+        # exc_info() returns (error_type, error_value, traceback) ← we only need traceback
         _, _, exc_tb = error_details.exc_info()
 
-        # Get line number where exception occurred
-        self.lineno = exc_tb.tb_lineno
-        
-        # Get the filename from the code object
-        self.file_name = exc_tb.tb_frame.f_code.co_filename
+        # Extract line number from traceback
+        self.lineno = exc_tb.tb_lineno  # tb_lineno = Line number where error occurred
+
+        # Extract file name from traceback
+        self.file_name = exc_tb.tb_frame.f_code.co_filename  # File where error happened
 
     def __str__(self):
         """
-        Return formatted error message string.
+        Format the error message for display.
         
-        Returns:
-            str: Formatted error message with file name, line number, and error details
-            
-        Example:
-            Error occurred in python script name [/path/to/file.py] 
-            line number [42] error message[division by zero]
+        This controls HOW the error looks when printed.
+        Example output: "Error occurred in python script name [main.py] line number [42] error message [Division by zero]"
         """
-        return "Error occurred in python script name [{0}] line number [{1}] error message[{2}]".format(
-            self.file_name, self.lineno, str(self.error_message)
+        return (
+            f"Error occurred in python script name [{self.file_name}] "
+            f"line number [{self.lineno}] "
+            f"error message [{self.error_message}]"
         )
 
 
-# Test/demonstration block
+# Run this block only when this file is executed directly (not when imported)
 if __name__ == "__main__":
-    """
-    Test the custom exception class.
-    
-    This block demonstrates how NetworkSecurityException works
-    by intentionally causing a division by zero error.
-    """
+
     try:
-        logger.info("Enter the try block")
-        a = 1/0  # This will raise ZeroDivisionError
-        print("This will not be printed", a)
+        logger.info("Inside try block")
+
+        # This line will cause an error (division by zero) to test the custom exception
+        a = 1 / 0
+
     except Exception as e:
-        # Wrap the base exception in our custom exception
+        # Catch the error and raise our custom exception (shows file, line, and error message)
         raise NetworkSecurityException(e, sys)
+
+
+
+
+
+
+
+
+
+
+
+
+
