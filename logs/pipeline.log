@@ -2984,3 +2984,201 @@ pip install python-multipart
 2025-12-27 17:41:55,930 - INFO - HTTP Request: GET https://dagshub.com/api/v1/user "HTTP/1.1 200 OK"
 2025-12-27 17:41:55,930 - INFO - Initialized MLflow to track repo "jaswanth2225-gif/network_security"
 2025-12-27 17:41:55,930 - INFO - Repository jaswanth2225-gif/network_security initialized!
+2025-12-28 16:44:12,098 - INFO - HTTP Request: GET https://dagshub.com/api/v1/user "HTTP/1.1 200 OK"
+2025-12-28 16:44:12,107 - INFO - Accessing as jaswanth2225-gif
+2025-12-28 16:44:12,574 - INFO - HTTP Request: GET https://dagshub.com/api/v1/repos/jaswanth2225-gif/network_security "HTTP/1.1 200 OK"
+2025-12-28 16:44:12,976 - INFO - HTTP Request: GET https://dagshub.com/api/v1/user "HTTP/1.1 200 OK"
+2025-12-28 16:44:12,977 - INFO - Initialized MLflow to track repo "jaswanth2225-gif/network_security"
+2025-12-28 16:44:12,978 - INFO - Repository jaswanth2225-gif/network_security initialized!
+2025-12-28 16:44:12,979 - INFO - Pipeline configuration initialized with timestamp: 12_28_2025_16_44_09
+2025-12-28 16:44:12,979 - INFO - Data Ingestion Config: <networksecurity.entity.config_entity.DataIngestionConfig object at 0x000001687A3E6F80>
+2025-12-28 16:44:12,979 - INFO - Initiating data ingestion process
+2025-12-28 16:44:12,979 - INFO - Exporting data from MongoDB to feature store
+2025-12-28 16:44:13,526 - INFO - Connecting to MongoDB
+2025-12-28 16:44:14,524 - INFO - Fetching documents from KRISHAI.NetworkData
+2025-12-28 16:44:16,402 - INFO - Fetched 9000 records
+2025-12-28 16:44:16,461 - INFO - Saved feature store file at: Artifacts\12_28_2025_16_44_09\data_ingestion\feature_store\phisingData.csv
+2025-12-28 16:44:16,461 - INFO - Starting train-test split
+2025-12-28 16:44:16,517 - INFO - Saved train and test files
+2025-12-28 16:44:16,517 - INFO - Data ingestion completed successfully
+2025-12-28 16:44:16,518 - INFO - Data Validation Config: <networksecurity.entity.config_entity.DataValidationConfig object at 0x000001687A3E6F50>
+2025-12-28 16:44:16,538 - INFO - Initiating data validation
+2025-12-28 16:44:16,632 - INFO - Required number of columns: 31
+2025-12-28 16:44:16,633 - INFO - Data frame has columns: 31
+2025-12-28 16:44:16,633 - INFO - Required number of columns: 31
+2025-12-28 16:44:16,633 - INFO - Data frame has columns: 31
+2025-12-28 16:44:16,633 - INFO - Required numerical columns: 31
+2025-12-28 16:44:16,633 - INFO - Numerical columns present in dataframe: True
+2025-12-28 16:44:16,633 - INFO - Required numerical columns: 31
+2025-12-28 16:44:16,633 - INFO - Numerical columns present in dataframe: True
+2025-12-28 16:44:16,755 - INFO - Data validation completed successfully
+2025-12-28 16:44:16,756 - INFO - Data Transformation Config: <networksecurity.entity.config_entity.DataTransformationConfig object at 0x000001687A3E6E60>
+2025-12-28 16:44:16,756 - INFO - Initiating data transformation
+2025-12-28 16:44:16,756 - INFO - Entered the initiate_data_transformation method of DataTransformation class
+2025-12-28 16:44:16,756 - INFO - Starting data transformation
+2025-12-28 16:44:16,837 - INFO - Saving object to pickle file
+2025-12-28 16:44:16,840 - INFO - Object saved successfully
+2025-12-28 16:44:16,841 - INFO - Saving object to pickle file
+2025-12-28 16:44:16,843 - INFO - Object saved successfully
+2025-12-28 16:44:16,843 - INFO - Exited the initiate_data_transformation method of DataTransformation class
+2025-12-28 16:44:16,843 - INFO - Data transformation completed successfully
+2025-12-28 16:44:16,844 - INFO - Model Trainer Config: <networksecurity.entity.config_entity.ModelTrainerConfig object at 0x000001680447E620>
+2025-12-28 16:44:16,844 - INFO - Initiating model training
+2025-12-28 16:44:24,568 - INFO - Random Forest: Train accuracy=0.9906, Test accuracy=0.9783
+2025-12-28 16:44:24,910 - INFO - Decision Tree: Train accuracy=0.9906, Test accuracy=0.9683
+2025-12-28 16:44:29,477 - INFO - Gradient Boosting: Train accuracy=0.9568, Test accuracy=0.9450
+2025-12-28 16:44:29,800 - INFO - Logistic Regression: Train accuracy=0.9278, Test accuracy=0.9189
+2025-12-28 16:44:38,899 - INFO - AdaBoost: Train accuracy=0.9329, Test accuracy=0.9289
+2025-12-28 16:45:15,125 - INFO - MLflow tracking: Logged metrics and model for Random Forest
+2025-12-28 16:45:15,555 - INFO - Saving object to pickle file
+2025-12-28 16:45:15,556 - INFO - Object saved successfully
+2025-12-28 16:45:15,556 - INFO - Saving object to pickle file
+2025-12-28 16:45:15,576 - INFO - Object saved successfully
+2025-12-28 16:45:15,576 - INFO - Model trainer artifact: ModelTrainerArtifact(trained_model_file_path='Artifacts\\12_28_2025_16_44_09\\model_trainer\\trained_model\\model.pkl', train_metric_artifact=ClassificationMetricArtifact(f1_score=np.float64(0.9915169660678643), accuracy=0.9905555555555555, precision=np.float64(0.9895418326693227), recall=np.float64(0.9935)), test_metric_artifact=ClassificationMetricArtifact(f1_score=np.float64(0.980872976949485), accuracy=0.9783333333333334, precision=np.float64(0.9718172983479106), recall=np.float64(0.9900990099009901)), best_model_name='Random Forest')
+2025-12-28 16:45:15,578 - INFO - Model training completed successfully
+2025-12-28 16:45:15,579 - INFO - Best Model: Random Forest
+2025-12-28 16:45:15,579 - INFO - Train Accuracy: 0.9906
+2025-12-28 16:45:15,580 - INFO - Test Accuracy: 0.9783
+2025-12-28 16:45:15,580 - INFO - Train F1: 0.9915
+2025-12-28 16:45:15,580 - INFO - Train Precision: 0.9895
+2025-12-28 16:45:15,580 - INFO - Train Recall: 0.9935
+2025-12-28 16:45:15,580 - INFO - Test F1: 0.9809
+2025-12-28 16:45:15,580 - INFO - Test Precision: 0.9718
+2025-12-28 16:45:15,580 - INFO - Test Recall: 0.9901
+2025-12-28 16:45:15,580 - INFO - Pipeline execution completed successfully!
+2025-12-28 16:45:15,580 - INFO - All artifacts saved under: Artifacts\12_28_2025_16_44_09
+2025-12-28 16:57:25,397 - INFO - HTTP Request: GET https://dagshub.com/api/v1/user "HTTP/1.1 200 OK"
+2025-12-28 16:57:25,403 - INFO - Accessing as jaswanth2225-gif
+2025-12-28 16:57:25,999 - INFO - HTTP Request: GET https://dagshub.com/api/v1/repos/jaswanth2225-gif/network_security "HTTP/1.1 200 OK"
+2025-12-28 16:57:26,409 - INFO - HTTP Request: GET https://dagshub.com/api/v1/user "HTTP/1.1 200 OK"
+2025-12-28 16:57:26,411 - INFO - Initialized MLflow to track repo "jaswanth2225-gif/network_security"
+2025-12-28 16:57:26,411 - INFO - Repository jaswanth2225-gif/network_security initialized!
+2025-12-28 16:57:26,412 - INFO - Pipeline configuration initialized with timestamp: 12_28_2025_16_57_23
+2025-12-28 16:57:26,412 - INFO - Data Ingestion Config: <networksecurity.entity.config_entity.DataIngestionConfig object at 0x00000278B7826F80>
+2025-12-28 16:57:26,412 - INFO - Initiating data ingestion process
+2025-12-28 16:57:26,412 - INFO - Exporting data from MongoDB to feature store
+2025-12-28 16:57:26,629 - INFO - Connecting to MongoDB
+2025-12-28 16:57:27,350 - INFO - Fetching documents from KRISHAI.NetworkData
+2025-12-28 16:57:29,521 - INFO - Fetched 9000 records
+2025-12-28 16:57:29,591 - INFO - Saved feature store file at: Artifacts\12_28_2025_16_57_23\data_ingestion\feature_store\phisingData.csv
+2025-12-28 16:57:29,592 - INFO - Starting train-test split
+2025-12-28 16:57:29,657 - INFO - Saved train and test files
+2025-12-28 16:57:29,658 - INFO - Data ingestion completed successfully
+2025-12-28 16:57:29,659 - INFO - Data Validation Config: <networksecurity.entity.config_entity.DataValidationConfig object at 0x00000278B7826F50>
+2025-12-28 16:57:29,671 - INFO - Initiating data validation
+2025-12-28 16:57:29,744 - INFO - Required number of columns: 31
+2025-12-28 16:57:29,744 - INFO - Data frame has columns: 31
+2025-12-28 16:57:29,744 - INFO - Required number of columns: 31
+2025-12-28 16:57:29,744 - INFO - Data frame has columns: 31
+2025-12-28 16:57:29,744 - INFO - Required numerical columns: 31
+2025-12-28 16:57:29,744 - INFO - Numerical columns present in dataframe: True
+2025-12-28 16:57:29,744 - INFO - Required numerical columns: 31
+2025-12-28 16:57:29,744 - INFO - Numerical columns present in dataframe: True
+2025-12-28 16:57:29,880 - INFO - Data validation completed successfully
+2025-12-28 16:57:29,880 - INFO - Data Transformation Config: <networksecurity.entity.config_entity.DataTransformationConfig object at 0x00000278B7826AA0>
+2025-12-28 16:57:29,880 - INFO - Initiating data transformation
+2025-12-28 16:57:29,880 - INFO - Entered the initiate_data_transformation method of DataTransformation class
+2025-12-28 16:57:29,881 - INFO - Starting data transformation
+2025-12-28 16:57:29,971 - INFO - Saving object to pickle file
+2025-12-28 16:57:29,975 - INFO - Object saved successfully
+2025-12-28 16:57:29,975 - INFO - Saving object to pickle file
+2025-12-28 16:57:29,977 - INFO - Object saved successfully
+2025-12-28 16:57:29,977 - INFO - Exited the initiate_data_transformation method of DataTransformation class
+2025-12-28 16:57:29,978 - INFO - Data transformation completed successfully
+2025-12-28 16:57:29,979 - INFO - Model Trainer Config: <networksecurity.entity.config_entity.ModelTrainerConfig object at 0x00000278C15541F0>
+2025-12-28 16:57:29,979 - INFO - Initiating model training
+2025-12-28 16:57:38,640 - INFO - Random Forest: Train accuracy=0.9906, Test accuracy=0.9778
+2025-12-28 16:57:38,978 - INFO - Decision Tree: Train accuracy=0.9906, Test accuracy=0.9661
+2025-12-28 16:57:43,004 - INFO - Gradient Boosting: Train accuracy=0.9561, Test accuracy=0.9472
+2025-12-28 16:57:43,288 - INFO - Logistic Regression: Train accuracy=0.9278, Test accuracy=0.9189
+2025-12-28 16:57:51,724 - INFO - AdaBoost: Train accuracy=0.9329, Test accuracy=0.9289
+2025-12-28 16:58:27,968 - INFO - MLflow tracking: Logged metrics and model for Random Forest
+2025-12-28 16:58:28,301 - INFO - Saving object to pickle file
+2025-12-28 16:58:28,301 - INFO - Object saved successfully
+2025-12-28 16:58:28,302 - INFO - Saving object to pickle file
+2025-12-28 16:58:28,319 - INFO - Object saved successfully
+2025-12-28 16:58:28,319 - INFO - Model trainer artifact: ModelTrainerArtifact(trained_model_file_path='Artifacts\\12_28_2025_16_57_23\\model_trainer\\trained_model\\model.pkl', train_metric_artifact=ClassificationMetricArtifact(f1_score=np.float64(0.991519082065353), accuracy=0.9905555555555555, precision=np.float64(0.9892981582877053), recall=np.float64(0.99375)), test_metric_artifact=ClassificationMetricArtifact(f1_score=np.float64(0.9803921568627451), accuracy=0.9777777777777777, precision=np.float64(0.970873786407767), recall=np.float64(0.9900990099009901)), best_model_name='Random Forest')
+2025-12-28 16:58:28,321 - INFO - Model training completed successfully
+2025-12-28 16:58:28,322 - INFO - Best Model: Random Forest
+2025-12-28 16:58:28,322 - INFO - Train Accuracy: 0.9906
+2025-12-28 16:58:28,322 - INFO - Test Accuracy: 0.9778
+2025-12-28 16:58:28,323 - INFO - Train F1: 0.9915
+2025-12-28 16:58:28,323 - INFO - Train Precision: 0.9893
+2025-12-28 16:58:28,323 - INFO - Train Recall: 0.9938
+2025-12-28 16:58:28,323 - INFO - Test F1: 0.9804
+2025-12-28 16:58:28,323 - INFO - Test Precision: 0.9709
+2025-12-28 16:58:28,323 - INFO - Test Recall: 0.9901
+2025-12-28 16:58:28,323 - INFO - Pipeline execution completed successfully!
+2025-12-28 16:58:28,323 - INFO - All artifacts saved under: Artifacts\12_28_2025_16_57_23
+2025-12-28 17:24:03,318 - INFO - HTTP Request: GET https://dagshub.com/api/v1/user "HTTP/1.1 200 OK"
+2025-12-28 17:24:03,323 - INFO - Accessing as jaswanth2225-gif
+2025-12-28 17:24:03,901 - INFO - HTTP Request: GET https://dagshub.com/api/v1/repos/jaswanth2225-gif/network_security "HTTP/1.1 200 OK"
+2025-12-28 17:24:04,343 - INFO - HTTP Request: GET https://dagshub.com/api/v1/user "HTTP/1.1 200 OK"
+2025-12-28 17:24:04,344 - INFO - Initialized MLflow to track repo "jaswanth2225-gif/network_security"
+2025-12-28 17:24:04,345 - INFO - Repository jaswanth2225-gif/network_security initialized!
+2025-12-28 17:39:49,281 - INFO - HTTP Request: GET https://dagshub.com/api/v1/user "HTTP/1.1 200 OK"
+2025-12-28 17:39:49,287 - INFO - Accessing as jaswanth2225-gif
+2025-12-28 17:39:49,889 - INFO - HTTP Request: GET https://dagshub.com/api/v1/repos/jaswanth2225-gif/network_security "HTTP/1.1 200 OK"
+2025-12-28 17:39:50,417 - INFO - HTTP Request: GET https://dagshub.com/api/v1/user "HTTP/1.1 200 OK"
+2025-12-28 17:39:50,422 - INFO - Initialized MLflow to track repo "jaswanth2225-gif/network_security"
+2025-12-28 17:39:50,424 - INFO - Repository jaswanth2225-gif/network_security initialized!
+2025-12-28 17:42:21,245 - INFO - HTTP Request: GET https://dagshub.com/api/v1/user "HTTP/1.1 200 OK"
+2025-12-28 17:42:21,254 - INFO - Accessing as jaswanth2225-gif
+2025-12-28 17:42:21,945 - INFO - HTTP Request: GET https://dagshub.com/api/v1/repos/jaswanth2225-gif/network_security "HTTP/1.1 200 OK"
+2025-12-28 17:42:22,454 - INFO - HTTP Request: GET https://dagshub.com/api/v1/user "HTTP/1.1 200 OK"
+2025-12-28 17:42:22,456 - INFO - Initialized MLflow to track repo "jaswanth2225-gif/network_security"
+2025-12-28 17:42:22,457 - INFO - Repository jaswanth2225-gif/network_security initialized!
+2025-12-28 17:46:04,826 - INFO - HTTP Request: GET https://dagshub.com/api/v1/user "HTTP/1.1 200 OK"
+2025-12-28 17:46:04,830 - INFO - Accessing as jaswanth2225-gif
+2025-12-28 17:46:05,420 - INFO - HTTP Request: GET https://dagshub.com/api/v1/repos/jaswanth2225-gif/network_security "HTTP/1.1 200 OK"
+2025-12-28 17:46:05,944 - INFO - HTTP Request: GET https://dagshub.com/api/v1/user "HTTP/1.1 200 OK"
+2025-12-28 17:46:05,946 - INFO - Initialized MLflow to track repo "jaswanth2225-gif/network_security"
+2025-12-28 17:46:05,947 - INFO - Repository jaswanth2225-gif/network_security initialized!
+2025-12-28 17:47:34,726 - INFO - HTTP Request: GET https://dagshub.com/api/v1/user "HTTP/1.1 200 OK"
+2025-12-28 17:47:34,730 - INFO - Accessing as jaswanth2225-gif
+2025-12-28 17:47:35,247 - INFO - HTTP Request: GET https://dagshub.com/api/v1/repos/jaswanth2225-gif/network_security "HTTP/1.1 200 OK"
+2025-12-28 17:47:35,722 - INFO - HTTP Request: GET https://dagshub.com/api/v1/user "HTTP/1.1 200 OK"
+2025-12-28 17:47:35,724 - INFO - Initialized MLflow to track repo "jaswanth2225-gif/network_security"
+2025-12-28 17:47:35,724 - INFO - Repository jaswanth2225-gif/network_security initialized!
+2025-12-28 17:49:28,775 - INFO - Starting data ingestion
+2025-12-28 17:49:28,775 - INFO - Exporting data from MongoDB to feature store
+2025-12-28 17:49:29,125 - INFO - Connecting to MongoDB
+2025-12-28 17:49:29,698 - INFO - Fetching documents from KRISHAI.NetworkData
+2025-12-28 17:49:32,617 - INFO - Fetched 9000 records
+2025-12-28 17:49:32,680 - INFO - Saved feature store file at: Artifacts\12_28_2025_17_47_30\data_ingestion\feature_store\phisingData.csv
+2025-12-28 17:49:32,680 - INFO - Starting train-test split
+2025-12-28 17:49:32,741 - INFO - Saved train and test files
+2025-12-28 17:49:32,741 - INFO - Data ingestion completed and artifact: DataIngestionArtifacts(trained_file_path='Artifacts\\12_28_2025_17_47_30\\data_ingestion\\ingested\\train.csv', tested_file_path='Artifacts\\12_28_2025_17_47_30\\data_ingestion\\ingested\\test.csv')
+2025-12-28 17:49:32,749 - INFO - Initiating data validation
+2025-12-28 17:49:32,839 - INFO - Required number of columns: 31
+2025-12-28 17:49:32,840 - INFO - Data frame has columns: 31
+2025-12-28 17:49:32,840 - INFO - Required number of columns: 31
+2025-12-28 17:49:32,840 - INFO - Data frame has columns: 31
+2025-12-28 17:49:32,840 - INFO - Required numerical columns: 31
+2025-12-28 17:49:32,840 - INFO - Numerical columns present in dataframe: True
+2025-12-28 17:49:32,840 - INFO - Required numerical columns: 31
+2025-12-28 17:49:32,840 - INFO - Numerical columns present in dataframe: True
+2025-12-28 17:49:32,968 - INFO - Entered the initiate_data_transformation method of DataTransformation class
+2025-12-28 17:49:32,968 - INFO - Starting data transformation
+2025-12-28 17:49:33,046 - INFO - Saving object to pickle file
+2025-12-28 17:49:33,050 - INFO - Object saved successfully
+2025-12-28 17:49:33,050 - INFO - Saving object to pickle file
+2025-12-28 17:49:33,052 - INFO - Object saved successfully
+2025-12-28 17:49:33,052 - INFO - Exited the initiate_data_transformation method of DataTransformation class
+2025-12-28 17:49:40,975 - INFO - Random Forest: Train accuracy=0.9906, Test accuracy=0.9794
+2025-12-28 17:49:41,206 - INFO - Decision Tree: Train accuracy=0.9906, Test accuracy=0.9689
+2025-12-28 17:49:46,849 - INFO - Gradient Boosting: Train accuracy=0.9553, Test accuracy=0.9450
+2025-12-28 17:49:47,070 - INFO - Logistic Regression: Train accuracy=0.9278, Test accuracy=0.9189
+2025-12-28 17:49:58,828 - INFO - AdaBoost: Train accuracy=0.9329, Test accuracy=0.9289
+2025-12-28 17:50:40,761 - INFO - MLflow tracking: Logged metrics and model for Random Forest
+2025-12-28 17:50:41,123 - INFO - Saving object to pickle file
+2025-12-28 17:50:41,125 - INFO - Object saved successfully
+2025-12-28 17:50:41,125 - INFO - Saving object to pickle file
+2025-12-28 17:50:41,145 - INFO - Object saved successfully
+2025-12-28 17:50:41,145 - INFO - Model trainer artifact: ModelTrainerArtifact(trained_model_file_path='Artifacts\\12_28_2025_17_47_30\\model_trainer\\trained_model\\model.pkl', train_metric_artifact=ClassificationMetricArtifact(f1_score=np.float64(0.9915211970074813), accuracy=0.9905555555555555, precision=np.float64(0.9890547263681592), recall=np.float64(0.994)), test_metric_artifact=ClassificationMetricArtifact(f1_score=np.float64(0.9818360333824251), accuracy=0.9794444444444445, precision=np.float64(0.9737098344693281), recall=np.float64(0.9900990099009901)), best_model_name='Random Forest')
+2025-12-28 18:06:46,087 - INFO - HTTP Request: GET https://dagshub.com/api/v1/user "HTTP/1.1 200 OK"
+2025-12-28 18:06:46,102 - INFO - Accessing as jaswanth2225-gif
+2025-12-28 18:06:46,728 - INFO - HTTP Request: GET https://dagshub.com/api/v1/repos/jaswanth2225-gif/network_security "HTTP/1.1 200 OK"
+2025-12-28 18:06:47,238 - INFO - HTTP Request: GET https://dagshub.com/api/v1/user "HTTP/1.1 200 OK"
+2025-12-28 18:06:47,244 - INFO - Initialized MLflow to track repo "jaswanth2225-gif/network_security"
+2025-12-28 18:06:47,247 - INFO - Repository jaswanth2225-gif/network_security initialized!

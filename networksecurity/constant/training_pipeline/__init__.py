@@ -137,4 +137,4 @@ MODEL_TRAINER_EXPECTED_SCORE: float = 0.6  # Minimum acceptable accuracy (60% = 
 MODEL_TRAINER_OVER_FIITING_UNDER_FITTING_THRESHOLD: float = 0.05  # Max difference between train/test accuracy (5%)
 # If train accuracy >> test accuracy (by >5%), model is overfitting (memorized training data)
 
-TRAINING_BUCKET_NAME = "netwworksecurity"  # Cloud storage bucket for model deployment
+TRAINING_BUCKET_NAME = "networksecurity2225"  # Cloud storage bucket for model deployment

@@ -13,6 +13,32 @@ print(training_pipeline.PIPELINE_NAME)
 print(training_pipeline.ARTIFACT_DIR)
 
 
+class TrainingPipelineConfig:
+    def __init__(self, timestamp=datetime.now()):
+        # WHY timestamp: Each run gets unique folder (Artifacts/12_23_2025_14_30_45/)
+        # WHY unique folders: Can compare runs, won't overwrite previous results
+        timestamp = timestamp.strftime("%m_%d_%Y_%H_%M_%S")
+        
+        self.pipeline_name = training_pipeline.PIPELINE_NAME
+        self.artifact_name = training_pipeline.ARTIFACT_DIR
+        
+        # WHY join: Creates path like Artifacts/12_23_2025_14_30_45/
+        # WHY timestamped: Every run is versioned and traceable
+        self.artifact_dir = os.path.join(self.artifact_name, timestamp)
+        
+        # WHY final_model: Separate folder for production-ready models
+        self.model_dir = os.path.join("final_model")
+        
+        self.timestamp: str = timestamp
+
+
+
+
+
+
+
+
+
 class DataIngestionConfig:
     """Paths and settings for fetching data from MongoDB and splitting train/test"""
     
