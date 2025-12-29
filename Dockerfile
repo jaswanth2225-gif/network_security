@@ -1,15 +1,15 @@
-FROM python:3.10-slim
+FROM python:3.10-slim-buster
 
 WORKDIR /app
 
 # Copy requirements first for better caching
 COPY requirements.txt .
+RUN apt update -y && apt install awscli -y
 
-# Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN apt-get update && pip install -r requirements.txt
 
 # Copy the entire application
-COPY . .
+COPY . /app
 
 # Create necessary directories
 RUN mkdir -p final_model prediction_output Artifacts logs
@@ -18,4 +18,4 @@ RUN mkdir -p final_model prediction_output Artifacts logs
 EXPOSE 8080
 
 # Run the application
-CMD ["python", "app.py"]
+CMD ["python3", "app.py"]
