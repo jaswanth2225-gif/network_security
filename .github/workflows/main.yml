@@ -98,6 +98,11 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
       
+      - name: Debug - Check ECR login
+        run: |
+          echo "Registry: ${{ steps.login-ecr.outputs.registry }}"
+          echo "Registry exists: $([ -z "${{ steps.login-ecr.outputs.registry }}" ] && echo 'NO' || echo 'YES')"
+      
       - name: Pull latest images
         run: |
          docker pull ${{ steps.login-ecr.outputs.registry }}/2225networksecurity:latest
