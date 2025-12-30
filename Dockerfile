@@ -1,12 +1,12 @@
-FROM python:3.10-slim-buster
+FROM python:3.10-slim-bullseye
 
 WORKDIR /app
 
 # Copy requirements first for better caching
 COPY requirements.txt .
-RUN apt update -y && apt install awscli -y
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN apt-get update && pip install -r requirements.txt
+RUN pip install awscli
 
 # Copy the entire application
 COPY . /app
