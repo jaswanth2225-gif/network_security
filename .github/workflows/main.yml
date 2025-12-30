@@ -7,7 +7,6 @@ on:
     paths-ignore:
       - README.md
 
-
 jobs:
   integration:
     runs-on: ubuntu-latest
