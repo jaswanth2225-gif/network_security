@@ -98,14 +98,9 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
       
-      - name: Debug - Check ECR login
-        run: |
-          echo "Registry: ${{ steps.login-ecr.outputs.registry }}"
-          echo "Registry exists: $([ -z "${{ steps.login-ecr.outputs.registry }}" ] && echo 'NO' || echo 'YES')"
-      
       - name: Pull latest images
         run: |
-         docker pull ${{ steps.login-ecr.outputs.registry }}/2225networksecurity:latest
+         docker pull 229789308852.dkr.ecr.us-east-1.amazonaws.com/2225networksecurity:latest
          
       #- name: Stop and remove  container if running
        # run: |
@@ -113,7 +108,7 @@ jobs:
        
       - name: Run Docker Image to serve users
         run: |
-         docker run -d -p 8080:8080 --ipc="host" --name=networksecurity -e 'AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}' -e 'AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}' -e 'AWS_REGION=${{ secrets.AWS_REGION }}'  ${{ steps.login-ecr.outputs.registry }}/2225networksecurity:latest
+         docker run -d -p 8080:8080 --ipc="host" --name=networksecurity -e 'AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}' -e 'AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}' -e 'AWS_REGION=${{ secrets.AWS_REGION }}'  229789308852.dkr.ecr.us-east-1.amazonaws.com/2225networksecurity:latest
       - name: Clean previous images and containers
         run: |
          docker system prune -f
